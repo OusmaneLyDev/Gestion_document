@@ -1,55 +1,44 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">GED</a>
+  <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <!-- Navbar Brand-->
+    <a class="navbar-brand ps-3" href="/">GED Application</a>
+    
+    <!-- Sidebar Toggle-->
     <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarNav"
-      aria-controls="navbarNav"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
+      class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0"
+      @click="$emit('toggleSidebar')"
     >
-      <span class="navbar-toggler-icon"></span>
+      <i class="fas fa-bars"></i>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <router-link class="nav-link" to="/dashboard" exact-active-class="active">
-            <i class="fas fa-tachometer-alt"></i> Tableau de Bord
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link" to="/documents" exact-active-class="active">
-            <i class="fas fa-file-alt"></i> Documents
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link" to="/settings" exact-active-class="active">
-            <i class="fas fa-cog"></i> Paramètres
-          </router-link>
-        </li>
-      </ul>
-      <!-- Déplacement des boutons de connexion et inscription à droite -->
-      <div class="ml-auto d-flex">
-        <router-link to="/login">
-          <button class="btn btn-outline-light ml-3">
-            <i class="fas fa-sign-in-alt"></i> Connexion
-          </button>
-        </router-link>
-        <router-link to="/register">
-          <button class="btn btn-outline-light ml-3">
-            <i class="fas fa-user-plus"></i> Inscription
-          </button>
-        </router-link>
+    
+    <!-- Navbar Search-->
+    <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+      <div class="input-group">
+        <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="btnNavbarSearch" />
+        <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
       </div>
-    </div>
+    </form>
+    
+    <!-- Navbar User Menu-->
+    <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-user fa-fw"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item" href="#">Settings</a></li>
+          <li><a class="dropdown-item" href="#">Activity Log</a></li>
+          <li><hr class="dropdown-divider" /></li>
+          <li><a class="dropdown-item" href="#">Logout</a></li>
+        </ul>
+      </li>
+    </ul>
   </nav>
 </template>
 
 <script>
 export default {
-  name: 'AppNavbar',
+  name: "AppNavbar",
 };
 </script>
 
@@ -61,7 +50,7 @@ export default {
   color: white !important;
 }
 .nav-link.active {
-  font-weight: bold; /* Pour indiquer la page active */
-  border-bottom: 2px solid white; /* Indicateur visuel */
+  font-weight: bold;
+  border-bottom: 2px solid white;
 }
 </style>

@@ -27,13 +27,36 @@
           <label for="type">Type de Document</label>
           <select
             id="type"
-            v-model="document.type"
+            v-model="document.type_id"
             required
             class="form-control"
           >
             <option value="" disabled>Choisissez un type</option>
-            <option v-for="type in documentTypes" :key="type.id" :value="type.nom">
+            <option
+              v-for="type in documentTypes"
+              :key="type.id"
+              :value="type.id"
+            >
               {{ type.nom }}
+            </option>
+          </select>
+        </div>
+  
+        <div class="form-group">
+          <label for="statut">Statut de Document</label>
+          <select
+            id="statut"
+            v-model="document.statut_id"
+            required
+            class="form-control"
+          >
+            <option value="" disabled>Choisissez un statut</option>
+            <option
+              v-for="statut in documentStatuses"
+              :key="statut.id"
+              :value="statut.id"
+            >
+              {{ statut.nom }}
             </option>
           </select>
         </div>
@@ -45,6 +68,8 @@
   </template>
   
   <script>
+  import axios from 'axios';
+  
   export default {
     name: 'AddDocument',
     data() {
@@ -52,29 +77,50 @@
         document: {
           titre: '',
           description: '',
-          type: '',
+          type_id: '',
+          statut_id: '',
         },
-        documentTypes: [
-          { id: 1, nom: 'PDF' },
-          { id: 2, nom: 'Word' },
-          { id: 3, nom: 'Excel' },
-          // Ajoutez d'autres types de documents ici si nécessaire
-        ],
+        documentTypes: [],
+        documentStatuses: []
       };
     },
+    created() {
+      this.fetchDocumentTypes();
+      this.fetchDocumentStatuses();
+    },
     methods: {
-      submitForm() {
-        // Logique pour ajouter le document
-        console.log('Document ajouté:', this.document);
-        // Réinitialiser le formulaire après soumission
-        this.resetForm();
-        // Rediriger ou afficher un message de succès
-        this.$router.push({ name: 'Documents' }); // Redirige vers la liste des documents
+      async fetchDocumentTypes() {
+        try {
+          const response = await axios.get('http://localhost:5000/api/document-types');
+          this.documentTypes = response.data;
+        } catch (error) {
+          console.error('Erreur lors de la récupération des types de document:', error);
+        }
+      },
+      async fetchDocumentStatuses() {
+        try {
+          const response = await axios.get('http://localhost:5000/api/document-statuses');
+          this.documentStatuses = response.data;
+        } catch (error) {
+          console.error('Erreur lors de la récupération des statuts de document:', error);
+        }
+      },
+      async submitForm() {
+        try {
+          await axios.post('http://localhost:5000/api/documents', this.document);
+          this.resetForm();
+          this.$router.push({ name: 'Documents' }); // Redirige vers la liste des documents
+        } catch (error) {
+          console.error('Erreur lors de l\'ajout du document:', error);
+        }
       },
       resetForm() {
-        this.document.titre = '';
-        this.document.description = '';
-        this.document.type = '';
+        this.document = {
+          titre: '',
+          description: '',
+          type_id: '',
+          statut_id: '',
+        };
       },
       goBack() {
         this.$router.push({ name: 'Documents' }); // Redirige vers la liste des documents

@@ -6,18 +6,26 @@ import UserLogin from '../views/UserLogin.vue';
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@fortawesome/fontawesome-free/js/all.js';
 import AddDocument from '../views/AddDocument.vue';
+import ListeStatutDocumentView from '../views/ListeStatutDocumentView.vue'; 
+import ListeTypeDocumentView from '../views/ListeTypeDocumentView.vue';
+import UtilisateurView from '../views/UtilisateurView.vue'; 
 
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
+    name: 'HomePage',
     component: HomePage,
   },
   {
     path: '/add-document',
     name: 'AddDocument',
     component: AddDocument // Assurez-vous que le composant est importé
+  },
+  {
+    path: '/utilisateurs',
+    name: 'Utilisateurs',
+    component: UtilisateurView, // Route vers le composant UtilisateurView
   },
   {
     path: '/dashboard',
@@ -33,6 +41,16 @@ const routes = [
     path: '/login',
     name: 'UserLogin',
     component: UserLogin,
+  },
+  {
+    path: '/liste-statut-document',
+    name: 'ListeStatutDocument',
+    component: ListeStatutDocumentView,
+  },
+  {
+    path: '/liste-type-document',
+    name: 'ListeTypeDocument',
+    component: ListeTypeDocumentView,
   },
 ];
 

@@ -1,15 +1,17 @@
 <template>
-  <div id="app">
-    <AppNavbar />
-    <div class="container-fluid">
-      <div class="row">
+  <div id="app" class="sb-nav-fixed">
+    <AppNavbar @toggleSidebar="toggleSidebar" />
+    <div id="layoutSidenav">
+      <div id="layoutSidenav_nav" :class="{ 'd-none': !sidebarVisible }">
         <AppSidebar />
-        <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+      </div>
+      <div id="layoutSidenav_content">
+        <main class="container-fluid px-4">
           <router-view />
         </main>
+        <AppFooter />
       </div>
     </div>
-    <AppFooter />
   </div>
 </template>
 
@@ -25,11 +27,31 @@ export default {
     AppSidebar,
     AppFooter,
   },
+  data() {
+    return {
+      sidebarVisible: true,
+    };
+  },
+  methods: {
+    toggleSidebar() {
+      this.sidebarVisible = !this.sidebarVisible;
+    },
+  },
 };
 </script>
 
 <style>
 #app {
   background-color: white;
+}
+#layoutSidenav {
+  display: flex;
+}
+#layoutSidenav_content {
+  flex-grow: 1;
+  overflow-x: hidden;
+}
+.d-none {
+  display: none;
 }
 </style>
