@@ -1,5 +1,6 @@
 <template>
   <div id="app" class="sb-nav-fixed">
+    <UserNotification ref="notification" /> <!-- Utilisation du composant ici -->
     <AppNavbar @toggleSidebar="toggleSidebar" />
     <div id="layoutSidenav">
       <div id="layoutSidenav_nav" :class="{ 'd-none': !sidebarVisible }">
@@ -19,6 +20,8 @@
 import AppNavbar from './components/AppNavbar.vue';
 import AppSidebar from './components/AppSidebar.vue';
 import AppFooter from './components/AppFooter.vue';
+import UserNotification from './components/UserNotification.vue'; 
+
 
 export default {
   name: 'App',
@@ -26,6 +29,7 @@ export default {
     AppNavbar,
     AppSidebar,
     AppFooter,
+    UserNotification, 
   },
   data() {
     return {

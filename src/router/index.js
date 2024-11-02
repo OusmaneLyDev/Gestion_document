@@ -9,13 +9,20 @@ import AddDocument from '../views/AddDocument.vue';
 import ListeStatutDocumentView from '../views/ListeStatutDocumentView.vue'; 
 import ListeTypeDocumentView from '../views/ListeTypeDocumentView.vue';
 import UtilisateurView from '../views/UtilisateurView.vue'; 
+import AddUser from '../Utilisateur/AddUser.vue';
 
 
 const routes = [
+  
   {
     path: '/',
     name: 'HomePage',
     component: HomePage,
+  },
+  {
+    path: '/add-user',
+    name: 'AddUser',
+    component: AddUser
   },
   {
     path: '/add-document',

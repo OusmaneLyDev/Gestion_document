@@ -1,143 +1,153 @@
 <template>
-  <div class="container-wrapper">
-    <div class="container">
-      <h1 class="text-center">Gestion des Documents</h1>
-      <button class="btn btn-primary my-4" @click="goToAddDocument">
-        <i class="fas fa-plus"></i> Ajouter un document
-      </button>
-
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Titre</th>
-            <th>Date Dépôt</th>
-            <th>Date Validation</th>
-            <th>Type</th>
-            <th>Statut</th>
-            <th>Utilisateur</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="document in documents" :key="document.id">
-            <td>{{ document.titre }}</td>
-            <td>{{ new Date(document.date_depot).toLocaleDateString() }}</td>
-            <td>{{ document.date_validation ? new Date(document.date_validation).toLocaleDateString() : 'En attente' }}</td>
-            <td>{{ document.typeDocument.nom }}</td>
-            <td>{{ document.statutDocument.nom }}</td>
-            <td>{{ document.utilisateur.nom }}</td>
-            <td>
-              <button class="btn btn-sm btn-info" @click="viewDocument(document.id)">
-                <i class="fas fa-eye"></i> Voir
-              </button>
-              <button class="btn btn-sm btn-secondary" @click="viewDocumentHistory(document.historique)">
-                <i class="fas fa-history"></i> Historique
-              </button>
-              <button class="btn btn-sm btn-warning" @click="editDocument(document.id)">
-                <i class="fas fa-edit"></i> Modifier
-              </button>
-              <button class="btn btn-sm btn-danger" @click="deleteDocument(document.id)">
-                <i class="fas fa-trash"></i> Supprimer
-              </button>
-            </td>
-          </tr>
-          <tr v-if="documents.length === 0">
-            <td colspan="7" class="text-center">Aucun document trouvé</td>
-          </tr>
-        </tbody>
-      </table>
-      <!-- Affichage de l'historique si sélectionné -->
-      <DocumentHistory v-if="selectedHistorique" :historique="selectedHistorique" />
-    </div>
+  <div class="documents-list">
+    <h1>Liste des Documents</h1>
+    <button class="btn btn-primary mb-4" @click="goToAddDocument">
+      <i class="bi bi-file-earmark-plus"></i> 
+      Ajouter un document
+    </button>
+    <div v-if="loading">Chargement...</div>
+    <div v-if="error" class="error">{{ error }}</div>
+    <table v-else>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Titre</th>
+          <th>Description</th>
+          <th>Date de Dépôt</th>
+          <th>Type de Document</th>
+          <th>Statut du Document</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="document in documents" :key="document.id">
+          <td>{{ document.id }}</td>
+          <td>{{ document.titre }}</td>
+          <td>{{ document.description }}</td>
+          <td>{{ formatDate(document.date_depot) }}</td>
+          <td>{{ document.typeDocument.nom }}</td>
+          <td>{{ document.statutDocument.nom }}</td>
+          <td>
+            <!-- Bouton pour Voir -->
+            <router-link :to="{ name: 'DocumentsView', params: { id: document.id } }" class="btn btn-outline-info btn-sm me-2">
+              <i class="bi bi-eye"></i>
+            </router-link>
+            <!-- Bouton pour Modifier -->
+            <button class="btn btn-outline-warning btn-sm me-2" @click="editDocument(document.id)">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <!-- Bouton pour Supprimer -->
+            <button class="btn btn-outline-danger btn-sm" @click="deleteDocument(document.id)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr v-if="documents.length === 0">
+          <td colspan="7" class="text-center">Aucun document trouvé</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
 <script>
+import { ref, computed, onMounted } from 'vue';
+import { useDocumentStore } from '@/stores/useDocumentStore';
 import axios from 'axios';
-import DocumentHistory from './DocumentHistory.vue';
+import { useRouter } from 'vue-router';
 
 export default {
-  name: 'DocumentList',
-  components: {
-    DocumentHistory,
-  },
-  data() {
-    return {
-      documents: [], // Liste des documents
-      selectedHistorique: null, // Historique sélectionné pour affichage
-    };
-  },
-  created() {
-    this.fetchDocuments(); // Récupérer les documents lors de la création du composant
-  },
-  methods: {
-    async fetchDocuments() {
+  name: 'DocumentsView',
+  setup() {
+    const documentStore = useDocumentStore();
+    const loading = ref(false);
+    const error = ref(null);
+    const router = useRouter();
+
+    const fetchDocuments = async () => {
+      loading.value = true;
+      error.value = null;
       try {
-        const response = await axios.get('http://localhost:5000/api/documents'); // API pour récupérer les documents
-        this.documents = response.data; // Mettre à jour la liste des documents
-      } catch (error) {
-        console.error('Erreur lors de la récupération des documents:', error);
+        const response = await axios.get('http://localhost:3051/api/documents');
+        documentStore.documents = response.data;
+      } catch (err) {
+        error.value = 'Erreur lors de la récupération des documents : ' + err.message;
+      } finally {
+        loading.value = false;
       }
-    },
-    goToAddDocument() {
-      this.$router.push({ name: 'AddDocument' }); // Rediriger vers le formulaire d'ajout de document
-    },
-    viewDocument(id) {
-      this.$router.push({ name: 'ViewDocument', params: { id } }); // Rediriger vers la vue d'un document spécifique
-    },
-    viewDocumentHistory(historique) {
-      this.selectedHistorique = historique; // Afficher l'historique du document
-    },
-    editDocument(id) {
-      this.$router.push({ name: 'EditDocument', params: { id } }); // Rediriger vers le formulaire d'édition
-    },
-    async deleteDocument(id) {
+    };
+
+    const goToAddDocument = () => {
+      router.push({ name: 'AddDocument' });
+    };
+
+    const editDocument = (id) => {
+      router.push({ name: 'EditDocument', params: { id } });
+    };
+
+    const deleteDocument = async (id) => {
       if (confirm('Êtes-vous sûr de vouloir supprimer ce document ?')) {
         try {
-          await axios.delete(`http://localhost:5000/api/documents/${id}`); // Appel API pour supprimer le document
-          this.fetchDocuments(); // Mettre à jour la liste des documents
-        } catch (error) {
-          console.error('Erreur lors de la suppression du document:', error);
+          await axios.delete(`http://localhost:3051/api/documents/${id}`);
+          documentStore.documents = documentStore.documents.filter(doc => doc.id !== id);
+        } catch (err) {
+          error.value = 'Erreur lors de la suppression : ' + err.message;
         }
       }
-    },
+    };
+
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    };
+
+    onMounted(fetchDocuments);
+
+    return {
+      documents: computed(() => documentStore.documents),
+      loading,
+      error,
+      deleteDocument,
+      editDocument,
+      formatDate,
+      goToAddDocument,
+    };
   },
 };
 </script>
 
 <style scoped>
-.container-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 0;
-  min-height: 100vh;
-}
-
-.container {
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 30px 40px;
-  max-width: 1000px;
+.documents-list {
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
-
-h1 {
-  margin-bottom: 30px;
+table {
+  width: 100%;
+  border-collapse: collapse;
 }
-
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+th {
+  background-color: #f2f2f2;
+}
 button {
-  margin: 0 5px;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
 }
-
-.table {
-  margin-top: 20px;
-}
-
-.table th,
-.table td {
-  padding: 15px;
-  text-align: center;
+.error {
+  color: red;
+  margin-top: 10px;
+  font-weight: bold;
 }
 </style>
