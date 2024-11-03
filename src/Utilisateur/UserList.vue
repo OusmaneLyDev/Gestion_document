@@ -1,11 +1,6 @@
 <template>
     <div class="user-list">
-      <!-- Bouton pour ajouter un utilisateur avec icône -->
-      <button @click="goToAddUser" class="add-user-btn" title="Ajouter un utilisateur">
-        <i class="fas fa-user-plus"></i> Ajouter un utilisateur
-      </button>
-  
-      <table>
+      <table class="table table-hover">
         <thead>
           <tr>
             <th>ID</th>
@@ -22,84 +17,26 @@
             <td>{{ user.email }}</td>
             <td>{{ formatDate(user.date_creation) }}</td>
             <td>
-              <!-- Icônes pour les actions CRUD avec espace entre chaque icône -->
-              <i @click="openModal('view', user)" class="fas fa-eye text-info" title="Voir"></i>
-              <i @click="openModal('edit', user)" class="fas fa-edit text-warning" title="Modifier"></i>
-              <i @click="openModal('delete', user)" class="fas fa-trash text-danger" title="Supprimer"></i>
+              <i @click="openModal('view', user)" class="fas fa-eye text-info action-icon" title="Voir"></i>
+              <i @click="openModal('edit', user)" class="fas fa-edit text-warning action-icon" title="Modifier"></i>
+              <i @click="openModal('delete', user)" class="fas fa-trash text-danger action-icon" title="Supprimer"></i>
             </td>
           </tr>
         </tbody>
       </table>
-  
-      
-      <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="viewModalLabel">Détails de l'utilisateur</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p><strong>Nom :</strong> {{ selectedUser.nom }}</p>
-              <p><strong>Email :</strong> {{ selectedUser.email }}</p>
-              <p><strong>Date de création :</strong> {{ formatDate(selectedUser.date_creation) }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-  
-      <!-- Modal Modifier -->
-      <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="editModalLabel">Modifier l'utilisateur</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p>Formulaire de modification pour {{ selectedUser.nom }}</p>
-              <!-- Inclure ici le formulaire de modification -->
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-              <button type="button" class="btn btn-primary" @click="saveEdit">Enregistrer</button>
-            </div>
-          </div>
-        </div>
-      </div>
-  
-      <!-- Modal Supprimer -->
-      <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              Êtes-vous sûr de vouloir supprimer {{ selectedUser.nom }} ?
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-              <button type="button" class="btn btn-danger" @click="confirmDelete">Supprimer</button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </template>
   
   <script>
-  import { onMounted, ref, computed } from 'vue';
-  import { useUserStore } from '../stores/user';
+  import { ref, computed, onMounted } from 'vue';
   import { Modal } from 'bootstrap';
+  import { useUserStore } from '../stores/user';
   
   export default {
     name: 'UserList',
     setup() {
       const userStore = useUserStore();
       const selectedUser = ref({});
-      const modalType = ref('');
   
       onMounted(() => {
         userStore.fetchUsers();
@@ -113,14 +50,11 @@
           year: 'numeric',
           month: 'long',
           day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
         });
       };
   
       const openModal = (type, user) => {
         selectedUser.value = user;
-        modalType.value = type;
         const modalId = type === 'view' ? '#viewModal' : type === 'edit' ? '#editModal' : '#deleteModal';
         const modalElement = document.querySelector(modalId);
         if (modalElement) {
@@ -129,21 +63,11 @@
         }
       };
   
-      const saveEdit = () => {
-        // Ajoutez ici la logique pour sauvegarder les modifications
-      };
-  
-      const confirmDelete = () => {
-        userStore.deleteUser(selectedUser.value.id);
-      };
-  
       return {
         users,
         formatDate,
         openModal,
         selectedUser,
-        saveEdit,
-        confirmDelete,
       };
     },
   };
@@ -151,38 +75,38 @@
   
   <style scoped>
   .user-list {
-    width: 100%;
+    width: 120%;
+    margin-top: 20px;
   }
-  table {
-    width: 100%;
-    border-collapse: collapse;
+  
+  .table {
+    border: none;
   }
-  th, td {
-    padding: 10px;
+  
+  .table th {
+    background-color: transparent;
+    color: #333;
+    padding: 12px;
     text-align: left;
   }
-  .add-user-btn {
-    margin-bottom: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px;
+  
+  .table td, .table th {
+    padding: 12px;
+  }
+  
+  .action-icon {
     cursor: pointer;
-    border-radius: 5px;
+    margin: 0 5px;
+    font-size: 1rem;
+    transition: color 0.3s;
   }
-  .add-user-btn i {
-    font-size: 18px;
-    margin-right: 5px;
+  
+  .action-icon:hover {
+    color: #0056b3;
   }
-  .add-user-btn:hover {
-    background-color: #45a049;
-  }
-  td i {
-    cursor: pointer;
-    margin: 0 8px; /* Espace entre les icônes */
-  }
-  td i:hover {
-    color: #007BFF;
+  
+  .table-hover tbody tr:hover {
+    background-color: #f1f1f1;
   }
   </style>
   

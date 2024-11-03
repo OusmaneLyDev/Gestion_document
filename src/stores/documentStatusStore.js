@@ -1,6 +1,6 @@
 // src/stores/documentStatusStore.js
 import { defineStore } from 'pinia';
-import axios from '../axios'; // Assurez-vous que le chemin est correct
+import axios from '../axios';
 
 export const useDocumentStatusStore = defineStore('documentStatus', {
   state: () => ({

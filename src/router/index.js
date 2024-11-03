@@ -6,14 +6,13 @@ import UserLogin from '../views/UserLogin.vue';
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@fortawesome/fontawesome-free/js/all.js';
 import AddDocument from '../views/AddDocument.vue';
-import ListeStatutDocumentView from '../views/ListeStatutDocumentView.vue'; 
-import ListeTypeDocumentView from '../views/ListeTypeDocumentView.vue';
+import ListeStatutDocument from '../components/ListeStatutDocument.vue'; 
+import ListeTypeDocument from '../components/ListeTypeDocument.vue';
+import TypeDocumentView from '../views/TypeDocumentView.vue';
 import UtilisateurView from '../views/UtilisateurView.vue'; 
 import AddUser from '../Utilisateur/AddUser.vue';
 
-
 const routes = [
-  
   {
     path: '/',
     name: 'HomePage',
@@ -27,12 +26,12 @@ const routes = [
   {
     path: '/add-document',
     name: 'AddDocument',
-    component: AddDocument // Assurez-vous que le composant est importé
+    component: AddDocument
   },
   {
     path: '/utilisateurs',
     name: 'Utilisateurs',
-    component: UtilisateurView, // Route vers le composant UtilisateurView
+    component: UtilisateurView,
   },
   {
     path: '/dashboard',
@@ -50,14 +49,19 @@ const routes = [
     component: UserLogin,
   },
   {
-    path: '/liste-statut-document',
-    name: 'ListeStatutDocument',
-    component: ListeStatutDocumentView,
+    path: '/statut-document',
+    name: 'StatutDocument',
+    component: ListeStatutDocument,
   },
   {
     path: '/liste-type-document',
     name: 'ListeTypeDocument',
-    component: ListeTypeDocumentView,
+    component: ListeTypeDocument,
+  },
+  {
+    path: '/types-document/:id',
+    name: 'TypeDocumentView',
+    component: TypeDocumentView,
   },
 ];
 

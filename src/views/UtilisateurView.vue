@@ -1,6 +1,9 @@
 <template>
     <div class="container">
       <h1>Liste des Utilisateurs</h1>
+      <button @click="goToAddUser" class="add-user-btn">
+        <i class="fas fa-user-plus"></i> Ajouter un utilisateur
+      </button>
       <UserList />
     </div>
   </template>
@@ -8,6 +11,7 @@
   <script>
   import { useUserStore } from '../stores/user';
   import { onMounted, computed } from 'vue';
+  import { useRouter } from 'vue-router';
   import UserList from '../Utilisateur/UserList.vue';
   
   export default {
@@ -17,6 +21,7 @@
     },
     setup() {
       const userStore = useUserStore();
+      const router = useRouter();
   
       // Charger les utilisateurs au montage du composant
       onMounted(() => {
@@ -30,13 +35,7 @@
   
       // Méthodes pour naviguer
       const goToAddUser = () => {
-        userStore.$router.push({ name: 'AddUser' });
-      };
-      const viewUser = (id) => {
-        userStore.$router.push({ name: 'ViewUser', params: { id } });
-      };
-      const editUser = (id) => {
-        userStore.$router.push({ name: 'EditUser', params: { id } });
+        router.push({ name: 'AddUser' });
       };
   
       return {
@@ -44,15 +43,10 @@
         errorMessage,
         loading,
         goToAddUser,
-        viewUser,
-        editUser,
-        deleteUser: userStore.deleteUser,
-        formatDate: userStore.formatDate,
       };
     },
   };
   </script>
-  
   
   <style scoped>
   .container {
@@ -64,13 +58,33 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
   
-  h2 {
-    font-size: 1.8rem;
+  h1 {
+    font-size: 2rem;
     color: #333;
+    margin-bottom: 20px;
+    text-align: center;
   }
   
-  button {
-    margin: 0 5px;
+  .add-user-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: #007bff; /* Changer en bleu */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+  
+  .add-user-btn i {
+    margin-right: 8px;
+    font-size: 1.2rem;
+  }
+  
+  .add-user-btn:hover {
+    background-color: #0069d9; /* Bleu plus foncé pour le survol */
   }
   </style>
   

@@ -31,13 +31,13 @@
           </a>
 
           <!-- Lien vers la gestion des types de documents -->
-          <a class="nav-link" href="/liste-type-document">
+          <a class="nav-link" href="/Liste-type-document">
             <div class="sb-nav-link-icon"><i class="fas fa-file-alt"></i></div>
             <span v-if="isSidebarOpen">Types de Document</span>
           </a>
 
           <!-- Lien vers la gestion des statuts de documents -->
-          <a class="nav-link" href="/liste-statut-document">
+          <a class="nav-link" href="/statut-document">
             <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
             <span v-if="isSidebarOpen">Statuts de Document</span>
           </a>

@@ -1,242 +1,233 @@
 <template>
-  <div class="add-document-container">
-    <h1 class="text-center">Ajouter un Document</h1>
-    <form @submit.prevent="submitForm" class="document-form">
-      <div class="form-group">
-        <label for="titre">Titre du Document</label>
-        <input
-          type="text"
-          id="titre"
-          v-model="document.titre"
-          required
-          class="form-control"
-          placeholder="Entrez le titre"
-        />
-      </div>
+    <div class="add-document-container">
+        <h1 class="text-center">Ajouter un Document</h1>
+        <form @submit.prevent="submitForm" class="document-form">
+            <div class="form-group">
+                <label for="titre">Titre du Document</label>
+                <input type="text" id="titre" v-model="document.titre" required class="form-control" placeholder="Entrez le titre" />
+            </div>
 
-      <div class="form-group">
-        <label for="description">Description du Document</label>
-        <textarea
-          id="description"
-          v-model="document.description"
-          class="form-control"
-          placeholder="Décrivez le document (facultatif)"
-        ></textarea>
-      </div>
+            <div class="form-group">
+                <label for="description">Description du Document</label>
+                <textarea id="description" v-model="document.description" class="form-control" placeholder="Décrivez le document (facultatif)"></textarea>
+            </div>
 
-      <div class="form-group">
-        <label for="date_depot">Date de Dépôt</label>
-        <input
-          type="date"
-          id="date_depot"
-          v-model="document.date_depot"
-          required
-          class="form-control"
-        />
-      </div>
+            <div class="form-group">
+                <label for="date_depot">Date de Dépôt</label>
+                <input type="date" id="date_depot" v-model="document.date_depot" required class="form-control" />
+            </div>
 
-      <div class="form-group">
-        <label for="type">Type de Document</label>
-        <select
-          id="type"
-          v-model="document.type_id"
-          required
-          class="form-control"
-        >
-          <option value="" disabled>Choisissez un type</option>
-          <option
-            v-for="type in documentTypes"
-            :key="type.id"
-            :value="type.id"
-          >
-            {{ type.nom }}
-          </option>
-        </select>
-      </div>
+            <div class="form-group">
+                <label for="type">Type de Document</label>
+                <select id="type" v-model="document.type_id" required class="form-control">
+                    <option value="" disabled>Choisissez un type</option>
+                    <option v-for="type in documentTypes" :key="type.id" :value="type.id">{{ type.nom }}</option>
+                </select>
+            </div>
 
-      <div class="form-group">
-        <label for="statut">Statut du Document</label>
-        <select
-          id="statut"
-          v-model="document.statut_id"
-          required
-          class="form-control"
-        >
-          <option value="" disabled>Choisissez un statut</option>
-          <option
-            v-for="statut in documentStatuses"
-            :key="statut.id"
-            :value="statut.id"
-          >
-            {{ statut.nom }}
-          </option>
-        </select>
-      </div>
+            <div class="form-group">
+                <label for="statut">Statut du Document</label>
+                <select id="statut" v-model="document.statut_id" required class="form-control">
+                    <option value="" disabled>Choisissez un statut</option>
+                    <option v-for="statut in documentStatuses" :key="statut.id" :value="statut.id">{{ statut.nom }}</option>
+                </select>
+            </div>
 
-      <div class="form-buttons">
-        <button type="submit" class="btn btn-primary">Ajouter le Document</button>
-        <button type="button" class="btn btn-secondary" @click="goBack">Annuler</button>
-      </div>
-    </form>
-  </div>
+            <div class="form-group">
+                <label for="file">Télécharger un Fichier</label>
+                <input type="file" id="file" @change="handleFileUpload" required class="form-control" />
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+                <button type="button" class="btn btn-secondary" @click="goBack">Annuler</button>
+            </div>
+        </form>
+    </div>
 </template>
 
 <script>
 import axios from 'axios';
 
 export default {
-  name: 'AddDocument',
-  data() {
-    return {
-      document: {
-        titre: '',
-        description: '',
-        date_depot: '',
-        type_id: '',
-        statut_id: '',
-      },
-      documentTypes: [],
-      documentStatuses: [],
-    };
-  },
-  created() {
-    this.fetchDocumentTypes();
-    this.fetchDocumentStatuses();
-  },
-  methods: {
-    async fetchDocumentTypes() {
-      try {
-        const response = await axios.get('http://localhost:5000/api/document-types');
-        this.documentTypes = response.data;
-      } catch (error) {
-        console.error('Erreur lors de la récupération des types de document:', error);
-      }
+    name: 'AddDocument',
+    data() {
+        return {
+            document: {
+                titre: '',
+                description: '',
+                date_depot: '',
+                type_id: '',
+                statut_id: '',
+            },
+            documentTypes: [],
+            documentStatuses: [],
+            selectedFile: null, // Nouveau champ pour stocker le fichier sélectionné
+        };
     },
-    async fetchDocumentStatuses() {
-      try {
-        const response = await axios.get('http://localhost:5000/api/document-statuses');
-        this.documentStatuses = response.data;
-      } catch (error) {
-        console.error('Erreur lors de la récupération des statuts de document:', error);
-      }
+    created() {
+        this.fetchDocumentTypes();
+        this.fetchDocumentStatuses();
     },
-    async submitForm() {
-      try {
-        await axios.post('http://localhost:5000/api/documents', this.document);
-        this.resetForm();
-        this.$router.push({ name: 'Documents' });
-      } catch (error) {
-        console.error("Erreur lors de l'ajout du document:", error);
-      }
+    methods: {
+        async fetchDocumentTypes() {
+            try {
+                const response = await axios.get('http://localhost:5000/api/document-types');
+                this.documentTypes = response.data;
+                console.log('Types de document:', this.documentTypes);
+            } catch (error) {
+                console.error('Erreur lors de la récupération des types de document:', error);
+            }
+        },
+        async fetchDocumentStatuses() {
+            try {
+                const response = await axios.get('http://localhost:5000/api/document-statuses');
+                this.documentStatuses = response.data;
+                console.log('Statuts de document:', this.documentStatuses);
+            } catch (error) {
+                console.error('Erreur lors de la récupération des statuts de document:', error);
+            }
+        },
+        handleFileUpload(event) {
+            this.selectedFile = event.target.files[0]; // Stocke le fichier sélectionné
+        },
+        async submitForm() {
+            const formData = new FormData();
+            formData.append('titre', this.document.titre);
+            formData.append('description', this.document.description);
+            formData.append('date_depot', this.document.date_depot);
+            formData.append('type_id', this.document.type_id);
+            formData.append('statut_id', this.document.statut_id);
+            formData.append('file', this.selectedFile); // Ajoute le fichier au FormData
+
+            try {
+                await axios.post('http://localhost:5000/api/documents', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                this.resetForm();
+                this.$router.push({ name: 'Documents' });
+            } catch (error) {
+                console.error("Erreur lors de l'ajout du document:", error);
+            }
+        },
+        resetForm() {
+            this.document = {
+                titre: '',
+                description: '',
+                date_depot: '',
+                type_id: '',
+                statut_id: '',
+            };
+            this.selectedFile = null; // Réinitialise le fichier sélectionné
+        },
+        goBack() {
+            this.$router.push({ name: 'Documents' });
+        },
     },
-    resetForm() {
-      this.document = {
-        titre: '',
-        description: '',
-        date_depot: '',
-        type_id: '',
-        statut_id: '',
-      };
-    },
-    goBack() {
-      this.$router.push({ name: 'Documents' });
-    },
-  },
 };
 </script>
 
 <style scoped>
 .add-document-container {
-  max-width: 450px;
-  margin: 20px auto;
-  padding: 25px;
-  border: 2px solid #ececec;
-  border-radius: 10px;
-  background-color: #ffffff;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    border: 2px solid #ececec;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .add-document-container:hover {
-  transform: scale(1.02);
+    transform: scale(1.02);
+    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2);
 }
 
 h1 {
-  margin-bottom: 20px;
-  color: #333333;
-  font-weight: 700;
-  font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #333333;
+    font-weight: 700;
+    font-size: 2rem;
+    text-align: center;
 }
 
 .document-form {
-  display: flex;
-  flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
 }
 
 .form-group {
-  margin-bottom: 15px;
+    margin-bottom: 0;
 }
 
 label {
-  font-weight: 600;
-  color: #4a4a4a;
+    font-weight: 600;
+    color: #4a4a4a;
+    display: block;
+    margin-bottom: 5px;
 }
 
 input,
 textarea,
 select {
-  border: 1px solid #d1d1d1;
-  border-radius: 6px;
-  padding: 10px;
-  font-size: 0.9rem;
-  transition: border-color 0.2s ease;
+    border: 1px solid #d1d1d1;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: #3b82f6;
-  outline: none;
-  box-shadow: 0px 0px 5px rgba(59, 130, 246, 0.5);
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0px 0px 5px rgba(59, 130, 246, 0.5);
 }
 
 textarea {
-  resize: vertical;
-  min-height: 80px;
+    resize: vertical;
+    min-height: 100px;
 }
 
 .form-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
+    grid-column: span 2;
+    display: flex;
+    justify-content: flex-end; /* Aligne les boutons à droite */
+    gap: 15px; /* Ajoute de l'espace entre les boutons */
+    margin-top: 20px;
 }
 
 .btn {
-  padding: 8px 16px;
-  font-weight: 600;
-  border-radius: 6px;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+    padding: 8px 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .btn-primary {
-  background-color: #3b82f6;
-  color: #ffffff;
-  border: none;
+    background-color: #3b82f6;
+    color: #ffffff;
+    border: none;
 }
 
 .btn-primary:hover {
-  background-color: #2563eb;
-  transform: translateY(-2px);
+    background-color: #2563eb;
+    transform: translateY(-2px);
 }
 
 .btn-secondary {
-  background-color: #f1f5f9;
-  color: #1e293b;
-  border: 1px solid #d1d5db;
+    background-color: #f9c0c0;
+    color: #1e293b;
+    border: 1px solid #d1d5db;
 }
 
 .btn-secondary:hover {
-  background-color: #e2e8f0;
-  transform: translateY(-2px);
+    background-color: #f29c9c;
+    transform: translateY(-2px);
 }
 </style>

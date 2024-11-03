@@ -29,7 +29,10 @@
           <li><a class="dropdown-item" href="#">Settings</a></li>
           <li><a class="dropdown-item" href="#">Activity Log</a></li>
           <li><hr class="dropdown-divider" /></li>
-          <li><a class="dropdown-item" href="#">Logout</a></li>
+          <li>
+            <a class="dropdown-item" v-if="isLoggedIn" href="#" @click="logout">Déconnexion</a>
+            <a class="dropdown-item" v-else href="#" @click="login">Connexion</a>
+          </li>
         </ul>
       </li>
     </ul>
@@ -39,6 +42,21 @@
 <script>
 export default {
   name: "AppNavbar",
+  data() {
+    return {
+      isLoggedIn: false,
+    };
+  },
+  methods: {
+    login() {
+      console.log("Utilisateur connecté");
+      this.isLoggedIn = true;
+    },
+    logout() {
+      console.log("Utilisateur déconnecté");
+      this.isLoggedIn = false;
+    },
+  },
 };
 </script>
 
