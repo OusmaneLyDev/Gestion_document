@@ -22,7 +22,7 @@ const options = {
 };
 
 // Utilisez les plugins
-app.use(Toast, options); // Passez les options ici
+app.use(Toast, options); 
 const pinia = createPinia();
 app.use(pinia);
 app.use(router); 

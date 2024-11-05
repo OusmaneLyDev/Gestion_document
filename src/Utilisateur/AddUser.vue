@@ -44,8 +44,8 @@
           </select>
         </div>
         <div class="form-buttons">
-          <button type="submit" class="btn btn-primary" :disabled="loading">
-            <span v-if="loading">Chargement...</span>
+          <button type="submit" class="btn btn-primary" :disabled="userStore.loading">
+            <span v-if="userStore.loading">Chargement...</span>
             <span v-else>Ajouter Utilisateur</span>
           </button>
           <button type="button" class="btn btn-secondary" @click="$emit('close')">Annuler</button>
@@ -55,56 +55,51 @@
   </template>
   
   <script>
-  import axios from 'axios';
+  import { ref } from 'vue';
+  import { useUserStore } from '../stores/user';
+  import { useToast } from 'vue-toastification';
   
   export default {
     name: 'AddUser',
-    data() {
-      return {
-        nom: '',
-        email: '',
-        mot_de_passe: '',
-        role: '',
-        loading: false, // Indicateur de chargement
-      };
-    },
-    methods: {
-      async submitForm() {
-        this.loading = true; // Démarrer le chargement
+    setup(_, { emit }) {
+      const userStore = useUserStore();
+      const toast = useToast();
+      const nom = ref('');
+      const email = ref('');
+      const mot_de_passe = ref('');
+      const role = ref('');
+  
+      const submitForm = async () => {
         try {
-          // Ajout d'une confirmation avant d'envoyer la requête
           const confirmSubmit = confirm("Êtes-vous sûr de vouloir ajouter cet utilisateur ?");
-          if (!confirmSubmit) {
-            this.loading = false; // Arrêter le chargement si l'utilisateur annule
-            return;
-          }
+          if (!confirmSubmit) return;
   
-          const response = await axios.post('http://localhost:3051/api/users', {
-            nom: this.nom,
-            email: this.email,
-            mot_de_passe: this.mot_de_passe,
-            role: this.role,
-          });
-  
-          // Utiliser un système de notification
-          this.$toast.success(response.data.message);
-  
-          this.clearForm();
-          this.$emit('close');
+          await userStore.addUser(nom.value, email.value, mot_de_passe.value, role.value);
+          toast.success('Utilisateur ajouté avec succès');
+          clearForm();
+          emit('close');
         } catch (error) {
           console.error("Erreur lors de l'ajout de l'utilisateur:", error);
           const errorMessage = error.response?.data?.message || "Échec de l'ajout de l'utilisateur";
-          this.$toast.error(errorMessage); // Afficher le message d'erreur
-        } finally {
-          this.loading = false; // Arrêter le chargement
+          toast.error(errorMessage);
         }
-      },
-      clearForm() {
-        this.nom = '';
-        this.email = '';
-        this.mot_de_passe = '';
-        this.role = '';
-      },
+      };
+  
+      const clearForm = () => {
+        nom.value = '';
+        email.value = '';
+        mot_de_passe.value = '';
+        role.value = '';
+      };
+  
+      return {
+        nom,
+        email,
+        mot_de_passe,
+        role,
+        userStore,
+        submitForm,
+      };
     },
   };
   </script>

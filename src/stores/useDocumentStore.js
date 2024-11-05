@@ -5,12 +5,14 @@ import axios from 'axios';
 export const useDocumentStore = defineStore('document', {
   state: () => ({
     documents: [],
+    types: [], // Liste des types de documents
+    statuses: [], // Liste des statuts de documents
     alertMessage: null,
-    loading: false, // Nouvel état pour le chargement
+    loading: false,
   }),
   actions: {
     async fetchDocuments() {
-      this.loading = true; // Commencer le chargement
+      this.loading = true;
       try {
         const response = await axios.get('http://localhost:3051/api/documents');
         this.documents = response.data;
@@ -18,11 +20,29 @@ export const useDocumentStore = defineStore('document', {
         this.alertMessage = 'Erreur lors de la récupération des documents.';
         console.error('Erreur:', error);
       } finally {
-        this.loading = false; // Fin du chargement
+        this.loading = false;
+      }
+    },
+    async fetchTypes() {
+      try {
+        const response = await axios.get('http://localhost:3051/api/types-document');
+        this.types = response.data;
+      } catch (error) {
+        this.alertMessage = 'Erreur lors de la récupération des types de documents.';
+        console.error('Erreur:', error);
+      }
+    },
+    async fetchStatuses() {
+      try {
+        const response = await axios.get('http://localhost:3051/api/statuts-document');
+        this.statuses = response.data;
+      } catch (error) {
+        this.alertMessage = 'Erreur lors de la récupération des statuts de documents.';
+        console.error('Erreur:', error);
       }
     },
     async addDocument(document) {
-      this.loading = true; // Commencer le chargement
+      this.loading = true;
       try {
         const response = await axios.post('http://localhost:3051/api/documents', document);
         this.documents.push(response.data);
@@ -31,11 +51,11 @@ export const useDocumentStore = defineStore('document', {
         this.alertMessage = 'Erreur lors de l\'ajout du document.';
         console.error('Erreur:', error);
       } finally {
-        this.loading = false; // Fin du chargement
+        this.loading = false;
       }
     },
     async editDocument(id, updatedDocument) {
-      this.loading = true; // Commencer le chargement
+      this.loading = true;
       try {
         await axios.put(`http://localhost:3051/api/documents/${id}`, updatedDocument);
         const index = this.documents.findIndex(doc => doc.id === id);
@@ -47,11 +67,11 @@ export const useDocumentStore = defineStore('document', {
         this.alertMessage = 'Erreur lors de la modification du document.';
         console.error('Erreur:', error);
       } finally {
-        this.loading = false; // Fin du chargement
+        this.loading = false;
       }
     },
     async deleteDocument(id) {
-      this.loading = true; // Commencer le chargement
+      this.loading = true;
       try {
         await axios.delete(`http://localhost:3051/api/documents/${id}`);
         this.documents = this.documents.filter(doc => doc.id !== id);
@@ -60,7 +80,7 @@ export const useDocumentStore = defineStore('document', {
         this.alertMessage = 'Erreur lors de la suppression du document.';
         console.error('Erreur:', error);
       } finally {
-        this.loading = false; // Fin du chargement
+        this.loading = false;
       }
     },
     clearAlert() {

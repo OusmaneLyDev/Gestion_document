@@ -16,7 +16,6 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import DocumentList from '@/components/Document/DocumentList.vue';
 
-
 export default {
   name: 'DocumentsView',
   components: {
@@ -28,19 +27,23 @@ export default {
     const loading = ref(false);
     const error = ref(null);
 
-    const fetchDocuments = async () => {
+    const fetchAllData = async () => {
       loading.value = true;
       error.value = null;
       try {
-        await documentStore.fetchDocuments();
+        await Promise.all([
+          documentStore.fetchDocuments(),
+          documentStore.fetchTypes(),
+          documentStore.fetchStatuses(),
+        ]);
       } catch (err) {
-        error.value = 'Erreur lors de la récupération des documents : ' + err.message;
+        error.value = 'Erreur lors de la récupération des données : ' + (err.message || 'Erreur inconnue');
       } finally {
         loading.value = false;
       }
     };
 
-    onMounted(fetchDocuments);
+    onMounted(fetchAllData);
 
     const goToAddDocument = () => {
       router.push({ name: 'AddDocument' });
@@ -48,7 +51,7 @@ export default {
 
     return {
       goToAddDocument,
-      documentStore, // Ajoutez documentStore pour l'accès dans le template
+      documentStore,
       loading,
       error,
     };
