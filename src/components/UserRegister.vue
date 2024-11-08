@@ -1,4 +1,3 @@
-<!-- src/components/Register.vue -->
 <template>
     <div class="container">
         <h2>Inscription</h2>
@@ -22,6 +21,7 @@
 </template>
 
 <script>
+import { ref } from 'vue';  // Importer ref depuis vue
 import { useAuthStore } from '../stores/authStore';
 
 export default {

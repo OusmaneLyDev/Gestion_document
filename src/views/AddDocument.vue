@@ -36,10 +36,22 @@
             </div>
 
             <div class="form-group">
+                <label for="utilisateur">Utilisateur</label>
+                <input
+                    type="text"
+                    id="utilisateur"
+                    v-model="document.id_Utilisateur"
+                    required
+                    class="form-control"
+                    placeholder="Entrez l'ID de l'utilisateur"
+                />
+            </div>
+
+            <div class="form-group">
                 <label for="type">Type de Document</label>
                 <select
                     id="type"
-                    v-model="document.type_id"
+                    v-model="document.id_TypeDocument"
                     required
                     class="form-control"
                 >
@@ -58,7 +70,7 @@
                 <label for="statut">Statut du Document</label>
                 <select
                     id="statut"
-                    v-model="document.statut_id"
+                    v-model="document.id_StatutDocument"
                     required
                     class="form-control"
                 >
@@ -71,17 +83,6 @@
                         {{ statut.nom }}
                     </option>
                 </select>
-            </div>
-
-            <div class="form-group">
-                <label for="file">Télécharger un Fichier</label>
-                <input
-                    type="file"
-                    id="file"
-                    @change="handleFileUpload"
-                    required
-                    class="form-control"
-                />
             </div>
 
             <div v-if="successMessage" class="alert alert-success">
@@ -122,8 +123,9 @@ export default {
                 titre: '',
                 description: '',
                 date_depot: '',
-                type_id: '',
-                statut_id: '',
+                id_Utilisateur: '',
+                id_TypeDocument: '',
+                id_StatutDocument: '',
             },
             documentTypes: [],
             documentStatuses: [],
@@ -154,9 +156,6 @@ export default {
                 this.errorMessage = "Erreur lors de la récupération des statuts de document.";
             }
         },
-        handleFileUpload(event) {
-            this.selectedFile = event.target.files[0];
-        },
         async submitForm() {
             this.isSubmitting = true;
             this.successMessage = '';
@@ -166,16 +165,26 @@ export default {
             formData.append('titre', this.document.titre);
             formData.append('description', this.document.description);
             formData.append('date_depot', this.document.date_depot);
-            formData.append('type_id', this.document.type_id);
-            formData.append('statut_id', this.document.statut_id);
-            formData.append('file', this.selectedFile);
+            formData.append('id_Utilisateur', this.document.id_Utilisateur);
+            formData.append('id_TypeDocument', this.document.id_TypeDocument);
+            formData.append('id_StatutDocument', this.document.id_StatutDocument);
+            // formData.append('file', this.selectedFile);
+
+            console.log('Form data:', {
+                titre: this.document.titre,
+                description: this.document.description,
+                date_depot: this.document.date_depot,
+                id_Utilisateur: this.document.id_Utilisateur,
+                id_TypeDocument: this.document.id_TypeDocument,
+                id_StatutDocument: this.document.id_StatutDocument,
+            });
 
             try {
                 await axios.post('http://localhost:3051/api/documents', formData, {
                     headers: {
-                         'Content-Type': 'multipart/form-data',
+                        'Content-Type': 'multipart/form-data',
                     },
-            });
+                });
 
                 this.successMessage = 'Document ajouté avec succès.';
                 this.resetForm();
@@ -193,8 +202,9 @@ export default {
                 titre: '',
                 description: '',
                 date_depot: '',
-                type_id: '',
-                statut_id: '',
+                id_Utilisateur: '',
+                id_TypeDocument: '',
+                id_StatutDocument: '',
             };
             this.selectedFile = null;
         },
@@ -204,6 +214,8 @@ export default {
     },
 };
 </script>
+
+
 
 <style scoped>
 .add-document-container {

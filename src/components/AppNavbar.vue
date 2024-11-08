@@ -23,7 +23,9 @@
     <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="fas fa-user fa-fw"></i>
+          <i class="fas fa-user fa-fw"></i> 
+          <!-- Affiche le nom de l'utilisateur s'il est connecté -->
+          <span v-if="isLoggedIn">{{ utilisateur.nom || 'Utilisateur' }}</span>
         </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
           <li><a class="dropdown-item" href="#">Settings</a></li>
@@ -42,19 +44,27 @@
 <script>
 export default {
   name: "AppNavbar",
-  data() {
-    return {
-      isLoggedIn: false,
-    };
+  props: {
+    utilisateur: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  computed: {
+    isLoggedIn() {
+      // Vérifie si l'utilisateur est connecté
+      return !!this.utilisateur && !!this.utilisateur.nom;
+    }
   },
   methods: {
     login() {
       console.log("Utilisateur connecté");
-      this.isLoggedIn = true;
+      // Action pour la connexion (à personnaliser si besoin)
     },
     logout() {
       console.log("Utilisateur déconnecté");
-      this.isLoggedIn = false;
+      // Déconnexion (par exemple, supprimer le token de session, à personnaliser)
+      this.$emit('logout'); // Émet un événement pour que le parent puisse gérer la déconnexion
     },
   },
 };

@@ -9,16 +9,15 @@ import 'vue-toastification/dist/index.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@fortawesome/fontawesome-free/js/all.js';
 
-// Créez l'application Vue
+
 const app = createApp(App);
 
-// Options par défaut pour Toast
 const options = {
-    position: 'top-right', // Position de la notification
+    position: 'top-right', 
     timeout: 5000, // Durée d'affichage
-    closeOnClick: true, // Fermer la notification au clic
-    pauseOnHover: true, // Mettre en pause au survol
-    draggable: true, // Rendre la notification draggable
+    closeOnClick: true,
+    pauseOnHover: true, 
+    draggable: true, 
 };
 
 // Utilisez les plugins

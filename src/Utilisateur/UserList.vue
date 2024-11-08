@@ -110,7 +110,7 @@
       };
   
       const openModal = (type, user) => {
-        console.log(`Modal type: ${type}`, user); // Vérifie si le clic est bien détecté
+        console.log(`Modal type: ${type}`, user); 
         selectedUser.value = { ...user };
         const modalId = type === 'view' ? '#viewModal' : type === 'edit' ? '#editModal' : '#deleteModal';
         const modalElement = document.querySelector(modalId);

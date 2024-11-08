@@ -66,6 +66,7 @@
       const goToAddType = () => {
         router.push({ name: 'AddType' });
       };
+      
   
       return {
         types,
